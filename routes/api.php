@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TagController;
+use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +33,9 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::prefix('v1')->group(function() {
-        Route::get('posts', [PostController::class, 'get']);
+        Route::get('posts', function() {
+            return new PostCollection(Post::all());
+        });
         Route::get('tags', [TagController::class, 'get']);
         Route::get('media', [MediaController::class, 'get']);
 

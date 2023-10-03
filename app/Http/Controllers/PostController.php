@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 use App\Models\Post;
 
@@ -14,28 +16,21 @@ class PostController extends Controller
      */
     public function get()
     {
-        $posts = Post::with('tags')->get();
+        $posts = Post::with('tags')->paginate(2);
         return response()->json($posts);
     }
 
     /**
      * POST an instance of the Post model
      */
-    public function post(Request $request)
+    public function post(PostRequest $request, PostService $service)
     {
-        $title = $request->input('title');
-        $content = $request->input('content');
-        
-        $post = Post::create([
-            'title' => $title,
-            'content' => $content
-        ]);
+        $post = $service->storePost(
+            $request->title,
+            $request->content
+        );
 
-        if ($post->exists) {
-            return response()->json($post);
-        } else {
-            return false;
-        }
+        return response()->json($post);
     }
 
     public function patch(Request $request)
