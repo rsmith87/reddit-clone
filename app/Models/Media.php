@@ -17,9 +17,12 @@ class Media extends Model
         'path',
         'mime_type',
         'size',
-        'extension'
+        'extension',
     ];
 
+    /**
+     * Relationships
+     */
     public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggables');

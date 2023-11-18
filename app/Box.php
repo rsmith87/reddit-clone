@@ -1,5 +1,6 @@
 <?php
-# app/Box.php
+
+// app/Box.php
 
 namespace App;
 
@@ -13,7 +14,7 @@ class Box
     /**
      * Construct the box with the given items.
      *
-     * @param array $items
+     * @param  array  $items
      */
     public function __construct($items = [])
     {
@@ -23,7 +24,7 @@ class Box
     /**
      * Check if the specified item is in the box.
      *
-     * @param string $item
+     * @param  string  $item
      * @return bool
      */
     public function has($item)
@@ -44,7 +45,7 @@ class Box
     /**
      * Retrieve all items from the box that start with the specified letter.
      *
-     * @param string $letter
+     * @param  string  $letter
      * @return array
      */
     public function startsWith($letter)

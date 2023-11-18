@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Media;
+use App\Models\Tag;
+use Illuminate\Database\Seeder;
 
 class MediaSeeder extends Seeder
 {
@@ -13,6 +13,6 @@ class MediaSeeder extends Seeder
      */
     public function run(): void
     {
-        Media::factory()->count(10)->create();
+        Media::factory()->has(Tag::factory())->count(10)->createQuietly();
     }
 }

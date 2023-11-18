@@ -14,6 +14,6 @@ class Group extends Model
      */
     public $fillable = [
         'name',
-        'description'
+        'description',
     ];
 }

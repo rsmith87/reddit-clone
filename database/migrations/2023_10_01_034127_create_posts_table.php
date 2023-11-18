@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->enum('status', ['draft', 'published', 'queued']);
             $table->text('title');
             $table->text('content');
+            $table->string('slug');
+            $table->foreignId('user_id');
             $table->timestamps();
         });
     }

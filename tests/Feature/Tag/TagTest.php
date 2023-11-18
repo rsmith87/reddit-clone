@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\Tag;
 
-use Laravel\Sanctum\Sanctum;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class TagTest extends TestCase
 {

@@ -2,18 +2,27 @@
 
 namespace Tests\Feature\Post;
 
-use Laravel\Sanctum\Sanctum;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use App\Models\Post;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class PostTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_post_get(): void
+    public function test_post_create(): void
+    {
+        Sanctum::actingAs(
+            User::factory()->create(),
+        );
+
+        // May need to create a plainTextToken
+        $post = Post::factory()->create();
+
+        $this->assertModelExists($post);
+
+    }
+
+    public function test_post_api_get(): void
     {
         Sanctum::actingAs(
             User::factory()->create(),
@@ -22,5 +31,37 @@ class PostTest extends TestCase
         $response = $this->get('api/v1/posts');
 
         $response->assertSuccessful();
+    }
+
+    public function test_post_api_post(): void
+    {
+        Sanctum::actingAs(
+            User::factory()->create(),
+        );
+
+        $post = Post::factory()->create();
+
+        $response = $this->post('api/v1/posts', [
+            'title' => $post->title,
+            'content' => $post->content,
+            'slug' => $post->slug,
+            'user_id' => $post->user_id,
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_post_not_authenticated_post(): void
+    {
+        $post = Post::factory()->create();
+
+        $response = $this->post('api/v1/posts', [
+            'title' => $post->title,
+            'content' => $post->content,
+            'slug' => $post->slug,
+            'user_id' => $post->user_id,
+        ]);
+
+        $response->assertStatus(405);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +21,8 @@ class MediaFactory extends Factory
             'mime_type' => fake()->mimeType(),
             'extension' => fake()->fileExtension(),
             'path' => fake()->imageUrl(1024, 768, null, null, null, false, 'png'),
-            'size' => mt_rand(100000000,999999999),
+            'size' => mt_rand(100000000, 999999999),
+            'user_id' => User::factory(),
         ];
     }
 }

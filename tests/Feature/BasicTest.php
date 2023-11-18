@@ -2,14 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Box;
+use Tests\TestCase;
 
 class BasicTest extends TestCase
 {
-    # Test function for Box class
+    // Test function for Box class
     public function testBoxContents()
     {
         $box = new Box(['toy']);

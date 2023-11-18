@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Post;
+use App\Models\PostComment;
+use App\Models\PostStatistics;
+use App\Models\Tag;
+use Illuminate\Database\Seeder;
 
 class PostSeeder extends Seeder
 {
@@ -13,6 +15,11 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        Post::factory()->count(10)->create();
+        Post::factory()
+            ->has(PostStatistics::factory())
+            ->has(PostComment::factory())
+            ->has(Tag::factory())
+            ->count(40)
+            ->createQuietly();
     }
 }

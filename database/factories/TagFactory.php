@@ -18,6 +18,7 @@ class TagFactory extends Factory
     {
         return [
             'name' => fake()->realText(10, 2),
+            'slug' => fake()->slug,
         ];
     }
 }

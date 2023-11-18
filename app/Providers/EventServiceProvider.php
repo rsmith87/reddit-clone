@@ -2,10 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Media;
+use App\Models\Post;
+use App\Models\PostComment;
+use App\Observers\MediaObserver;
+use App\Observers\PostCommentObserver;
+use App\Observers\PostObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -21,11 +26,21 @@ class EventServiceProvider extends ServiceProvider
     ];
 
     /**
+     * The model observers for your application.
+     *
+     * @var array
+     */
+    protected $observers = [
+        Post::class => [PostObserver::class],
+        PostComment::class => [PostCommentObserver::class],
+        Media::class => [MediaObserver::class],
+    ];
+
+    /**
      * Register any events for your application.
      */
     public function boot(): void
     {
-        //
     }
 
     /**

@@ -14,7 +14,8 @@ class Tag extends Model
      * The fillable attributes of the model.
      */
     public $fillable = [
-        'name'
+        'name',
+        'slug',
     ];
 
     /**
@@ -24,12 +25,12 @@ class Tag extends Model
     {
         return $this->morphedByMany(Post::class, 'taggables');
     }
- 
+
     /**
      * Get all of the videos that are assigned this tag.
      */
     public function videos(): MorphToMany
     {
         return $this->morphedByMany(Media::class, 'taggables');
-    }   
+    }
 }

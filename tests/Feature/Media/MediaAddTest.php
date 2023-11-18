@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\Media;
 
-use Laravel\Sanctum\Sanctum;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class MediaAddTest extends TestCase
 {
@@ -21,14 +19,14 @@ class MediaAddTest extends TestCase
             User::factory()->create(),
         );
 
-		Storage::fake('media');
+        Storage::fake('media');
 
-		$file = UploadedFile::fake()->image('media.jpg');
+        $file = UploadedFile::fake()->image('media.jpg');
 
-		$response = $this->post('api/v1/media', [
-			'media' => $file
-		]);
+        $response = $this->post('api/v1/media', [
+            'file' => $file,
+        ]);
 
-		Storage::disk('media')->assertExists($file->hashName());
+        Storage::disk('local')->assertExists('uploads/'.$file->hashName());
     }
 }

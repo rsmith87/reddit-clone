@@ -2,41 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\MediaRequest;
 use App\Models\Media;
+use App\Services\MediaService;
 
 class MediaController extends Controller
 {
     /**
      * Return all instances of the model.
-     * 
+     *
      * return string
      */
     public function get()
     {
         $media = Media::with('tags')->get();
+
         return response()->json($media);
     }
 
     /**
      * Posts a new instance of the model if validated.
      */
-    public function post(Request $request)
+    public function post(MediaRequest $request, MediaService $service)
     {
-        $validated = $request->validate([
-            'media' => 'required'
-        ]);
+        /**
+         * Handles validation of the request.
+         */
+        $validated = $request->validated();
 
-        $media = $request->file('media');
+        $uploaded_media = $service->store(
+            $request->file('file')
+        );
 
-        $destination_path = 'uploads';
-        $media->move($destination_path, $media->getClientOriginalName());
-
-        Media::updateOrCreate([
-            'path',
-            'mime_type' => $media->getMimeType(),
-            'size' => $media->getSize(),
-            'extension' => $media->getClientOriginalExtension(),
-        ]);
+        return response()->json($uploaded_media);
     }
 }
