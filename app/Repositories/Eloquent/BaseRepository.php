@@ -3,8 +3,10 @@
 namespace App\Repositories\Eloquent;
 
 use App\Repositories\EloquentRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 class BaseRepository implements EloquentRepositoryInterface
 {
@@ -34,6 +36,16 @@ class BaseRepository implements EloquentRepositoryInterface
     }
 
     /**
+     * Get all models.
+     *
+     * @return Collection
+     */
+    public function all(): Collection
+    {
+        return $this->model->get();
+    }
+
+    /**
      * @param $id
      *
      * @return Model
@@ -41,6 +53,17 @@ class BaseRepository implements EloquentRepositoryInterface
     public function find(int $id = 0): ?Model
     {
         return $this->model->find($id);
+    }
+
+    /**
+     * Get model by slug.
+     *
+     * @param  string  $slug
+     * @return Model|null
+     */
+    public function findBySlug(string $slug): ?Model
+    {
+        return $this->model->where('slug', $slug)->first();
     }
 
     /**
@@ -61,7 +84,7 @@ class BaseRepository implements EloquentRepositoryInterface
      */
     public function delete(Model $model): bool
     {
-        return $this->model->destroy($model);
+        return $model->delete();
     }
 
     /**
@@ -77,5 +100,16 @@ class BaseRepository implements EloquentRepositoryInterface
     public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginator
     {
         return $this->model->paginate($perPage, $columns, $pageName, $page);
+    }
+
+    /**
+     * Generates a slug from a given name.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function generateSlug(string $name): string
+    {
+        return Str::slug($name);
     }
 }

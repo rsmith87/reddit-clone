@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use App\Enums\GroupType;
 
-class PostCommentRequest extends FormRequest
+class GroupRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,19 +16,9 @@ class PostCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment' => ['required', 'string'],
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'comment.required' => 'You must provide a comment.',
+            'name'        => 'required|string|max:64',
+            'type'        => new Enum(GroupType::class),
+            'description' => 'string|max:255',
         ];
     }
 }

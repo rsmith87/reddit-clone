@@ -4,11 +4,23 @@ namespace Tests\Feature\Post;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Foundation\Testing\WithoutEvents;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PostTest extends TestCase
 {
+    public function test_post_api_get(): void
+    {
+        Sanctum::actingAs(
+            User::factory()->create(),
+        );
+
+        $response = $this->get('api/v1/posts');
+
+        $response->assertSuccessful();
+    }
+
     public function test_post_create(): void
     {
         Sanctum::actingAs(
@@ -22,17 +34,6 @@ class PostTest extends TestCase
 
     }
 
-    public function test_post_api_get(): void
-    {
-        Sanctum::actingAs(
-            User::factory()->create(),
-        );
-
-        $response = $this->get('api/v1/posts');
-
-        $response->assertSuccessful();
-    }
-
     public function test_post_api_post(): void
     {
         Sanctum::actingAs(
@@ -40,15 +41,12 @@ class PostTest extends TestCase
         );
 
         $post = Post::factory()->create();
-
         $response = $this->post('api/v1/posts', [
             'title' => $post->title,
-            'content' => $post->content,
-            'slug' => $post->slug,
-            'user_id' => $post->user_id,
+            'content' => $post->content
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 
     public function test_post_not_authenticated_post(): void
@@ -58,8 +56,6 @@ class PostTest extends TestCase
         $response = $this->post('api/v1/posts', [
             'title' => $post->title,
             'content' => $post->content,
-            'slug' => $post->slug,
-            'user_id' => $post->user_id,
         ]);
 
         $response->assertStatus(405);

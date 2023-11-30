@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PostStatus;
 use App\Http\Requests\PostRequest;
+use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Repositories\Eloquent\PostRepository;
-use App\Services\PostService;
-use Illuminate\Http\Request;
+use App\Events\PostCreated;
 
 class PostController extends Controller
 {
@@ -22,49 +21,56 @@ class PostController extends Controller
     /**
      * Returns all instances of the model
      *
-     * @return string
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
+        $this->authorize('view', Post::class);
         $posts = $this->postRepository->all();
         $posts->load(['postComments', 'postStatistics']);
 
-        return response()->json(PostResource::collection($posts));
+        return new PostCollection($posts);
+    }
+
+    public function getPopularPosts()
+    {
+        $this->authorize('view', Post::class);
+        $posts = $this->postRepository->getPopular();
+        $posts->load(['postComments', 'postStatistics']);
+
+        return new PostCollection($posts);
     }
 
     public function findBySlug($slug)
     {
+        $this->authorize('view', Post::class);
         $posts = $this->postRepository->findBySlug($slug);
         $posts->load(['postComments', 'postStatistics']);
 
-        return response()->json($posts);
+        return new PostResource($posts);
     }
 
-    /**
-     * POST an instance of the Post model
-     */
-    public function store(PostRequest $request, PostService $service)
+    public function store(PostRequest $postRequest)
     {
-        $validated = $request->validated();
+        $this->authorize('create', [Post::class, $postRequest->user()]);
+        $validated = $postRequest->validated();
 
-        $post = $service->store(
-            $request['title'],
-            PostStatus::PUBLISHED,
-            $request['content'],
-            $request['slug']
-        );
+        $post = $this->postRepository->create($validated);
 
-        return response()->json($post);
+        event(new PostCreated($post));
+
+        return new PostResource($post);
     }
 
-    public function patch(PostRequest $postRequest)
+    public function patch(PostRequest $postRequest, Post $post)
     {
+        $this->authorize('update', $post);
         $postRequest->user()->posts()->update($postRequest->validated());
 
         return response()->json($postRequest->all());
     }
 
-    public function delete(Request $request, Post $post)
+    public function delete(PostRequest $postRequest, Post $post)
     {
         $this->authorize('destroy', $post);
 

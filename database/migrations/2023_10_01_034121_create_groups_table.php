@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['public', 'private']);
             $table->string('name');
             $table->text('description');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

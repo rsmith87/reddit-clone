@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class UserCollection extends ResourceCollection
+class TagCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -14,9 +14,6 @@ class UserCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return [
-            'data' => parent::toArray($request),
-            'posts' => PostCollection::collection($request->user()->posts()),
-        ];
+        return parent::toArray($request);
     }
 }

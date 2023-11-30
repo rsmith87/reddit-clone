@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Settings;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -18,7 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'codenut33@gmail.com',
             'password' => '123123123',
         ]);
-
-        User::factory()->count(10)->create();
+        
+        User::factory()->count(10)->has(Settings::factory())->create();
     }
 }

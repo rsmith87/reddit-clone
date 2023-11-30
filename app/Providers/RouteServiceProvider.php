@@ -17,11 +17,18 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/dashboard';
 
+    protected $bind = [
+        'tag' => \App\Models\Tag::class,
+        'post' => \App\Models\Post::class, 
+    ];
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
     public function boot(): void
     {
+        Route::model('postComment', \App\Models\PostComment::class);
+
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });

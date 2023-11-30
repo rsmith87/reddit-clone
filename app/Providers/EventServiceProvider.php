@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\Media;
-use App\Models\Post;
-use App\Models\PostComment;
-use App\Observers\MediaObserver;
-use App\Observers\PostCommentObserver;
-use App\Observers\PostObserver;
+use App\Events\PostCreated;
+use App\Events\UserCreated;
+use App\Events\UserLogin;
+use App\Events\UserLogout;
+use App\Listeners\CreatePostStatisticsRecord;
+use App\Listeners\CreateSettingsRecordOnUserCreation;
+use App\Listeners\DestroyUserSettingsCache;
+use App\Listeners\SendMailOnPostCreated;
+use App\Listeners\CacheUserSettingsOnLogin;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -23,6 +26,19 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        PostCreated::class => [
+            CreatePostStatisticsRecord::class,
+            SendMailOnPostCreated::class,
+        ],
+        UserCreated::class => [
+            CreateSettingsRecordOnUserCreation::class,
+        ],
+        UserLogin::class => [
+            CacheUserSettingsOnLogin::class,
+        ],
+        UserLogout::class => [
+            DestroyUserSettingsCache::class,
+        ],
     ];
 
     /**
@@ -31,9 +47,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $observers = [
-        Post::class => [PostObserver::class],
-        PostComment::class => [PostCommentObserver::class],
-        Media::class => [MediaObserver::class],
     ];
 
     /**

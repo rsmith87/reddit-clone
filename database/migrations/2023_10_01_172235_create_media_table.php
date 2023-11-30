@@ -13,13 +13,17 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('hash_name');
             $table->text('path');
             $table->string('mime_type');
             $table->bigInteger('size');
-            $table->string('extension');
-            $table->foreignId('user_id');
+            $table->binary('blob')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users', 'id');
             $table->timestamps();
         });
+
+        DB::statement('ALTER TABLE `media` MODIFY `blob` MEDIUMBLOB');
     }
 
     /**

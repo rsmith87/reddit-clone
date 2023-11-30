@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Group;
 use Illuminate\Database\Seeder;
 
 class GroupSeeder extends Seeder
@@ -11,6 +12,18 @@ class GroupSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $group = new Group;
+        $group->name = 'Admin group';
+        $group->type = 'private';
+        $group->description = 'Admin group description';
+        $group->slug = 'admin-group';
+        $group->save();
+
+        $groupTwo = new Group;
+        $groupTwo->name = 'Public group';
+        $groupTwo->type = 'public';
+        $groupTwo->description = 'Public group description';
+        $groupTwo->slug = 'public-group';
+        $groupTwo->save();
     }
 }

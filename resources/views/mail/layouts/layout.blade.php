@@ -18,7 +18,7 @@
                         <td align="center" valign="top">
                             <!-- Add your email content here -->
                             @yield('content')
-                        </td>
+                        </tds>
                     </tr>
                 </table>
             </td>

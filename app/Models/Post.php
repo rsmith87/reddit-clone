@@ -3,16 +3,32 @@
 namespace App\Models;
 
 use App\Enums\PostStatus;
+use App\Models\Traits\HasSlug;
+use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Post extends Model
 {
     use HasFactory;
+    use HasSlug;
+
+    public function getRouteKeyName()
+    {
+        return 'slug'; // replace with your actual route key name
+    }
+
+    protected $slugField = 'title';
+
+    protected $guarded = [
+        'user_id',
+        'slug',
+    ];
 
     /**
      * Fillable attributes for the model
@@ -21,18 +37,19 @@ class Post extends Model
         'status',
         'title',
         'content',
-        'slug',
     ];
 
     protected $casts = [
-        'status' => PostStatus::class,
+        'status'  => PostStatus::class,
+        'slug'    => 'string',
+        'user_id' => 'integer',
     ];
 
     public function scopePopular(Builder $query): void
     {
-        $query->load(['postStatistics']);
-
-        $query->where('upvote_count', '>', 200);
+        $query->whereHas('postStatistics', function ($subquery) {
+            $subquery->where('upvote_count', '>', 100);
+        });
     }
 
     public function scopePublished(Builder $query): void
@@ -59,7 +76,7 @@ class Post extends Model
     }
 
     /**
-     * Retreives post statistics
+     * Retrieves post statistics
      */
     public function postStatistics(): HasOne
     {
@@ -80,5 +97,13 @@ class Post extends Model
     public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    /**
+     * Handle relationship with groups.
+     */
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_post');
     }
 }

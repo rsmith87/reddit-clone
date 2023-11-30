@@ -23,10 +23,10 @@ class MediaAddTest extends TestCase
 
         $file = UploadedFile::fake()->image('media.jpg');
 
-        $response = $this->post('api/v1/media', [
+        $this->post('api/v1/media', [
             'file' => $file,
         ]);
 
-        Storage::disk('local')->assertExists('uploads/'.$file->hashName());
+        Storage::disk('local')->assertExists('images/'.$file->hashName());
     }
 }

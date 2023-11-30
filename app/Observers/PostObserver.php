@@ -10,6 +10,7 @@ class PostObserver
     public function creating(Post $post)
     {
         $post->user_id = Auth::id();
+        $post->slug = $post->generateSlug($post->title);
     }
 
     /**

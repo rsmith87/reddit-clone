@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -45,6 +46,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * The settings that belong to the user.
+     */
+    public function settings(): HasOne
+    {
+        return $this->hasOne(Settings::class);
+    }
+
+    /**
      * The posts that belong to the user.
      */
     public function posts(): HasMany
@@ -55,7 +64,7 @@ class User extends Authenticatable
     /**
      * The comments that belong to the user.
      */
-    public function comments(): HasMany
+    public function postComments(): HasMany
     {
         return $this->hasMany(PostComment::class);
     }

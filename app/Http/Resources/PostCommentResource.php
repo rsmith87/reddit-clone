@@ -14,6 +14,10 @@ class PostCommentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'comment'    => $this->comment,
+            'created_at' => $this->created_at,
+            'user'       => $this->user->name,
+        ];
     }
 }

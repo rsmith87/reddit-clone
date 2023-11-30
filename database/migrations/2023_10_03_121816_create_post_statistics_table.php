@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('post_statistics', function (Blueprint $table) {
             $table->unsignedBigInteger('post_id')->primary();
-            $table->bigInteger('view_count');
-            $table->bigInteger('upvote_count');
-            $table->bigInteger('downvote_count');
+            $table->bigInteger('view_count')->default(0);
+            $table->bigInteger('upvote_count')->default(0);
+            $table->bigInteger('downvote_count')->default(0);
             $table->timestamps();
 
             $table->foreign('post_id')->references('id')->on('posts');

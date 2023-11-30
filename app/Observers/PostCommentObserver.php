@@ -9,7 +9,7 @@ class PostCommentObserver
 {
     public function creating(PostComment $postComment)
     {
-        $postComment->user_id = Auth::id();
-        $postComment->post_id = $postComment->post->id;
+        //$postComment->user_id = Auth::id();
+        //$postComment->post_id = $postComment::with('post')->first()->post->id;
     }
 }

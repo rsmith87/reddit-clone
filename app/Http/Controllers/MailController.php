@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PostMail;
 use App\Mail\WelcomeMail;
 use App\Mail\CancelAccountMail;
 use App\Http\Requests\MailTemplateRequest;
 use App\Models\MailTemplate;
+use App\Models\Post;
 use App\Models\User;
 use Mail;
 
@@ -45,7 +47,7 @@ class MailController extends Controller
         return response()->json($mailTemplate);
     }
 
-    public function sendMail()
+    public function sendWelcomeMail()
     {
         $user = User::where('id', \Auth::id())->first();
         Mail::to($user->email)->send(new WelcomeMail($user));
@@ -55,5 +57,11 @@ class MailController extends Controller
     {
         $user = User::where('id', \Auth::id())->first();
         Mail::to($user->email)->send(new CancelAccountMail($user));
+    }
+
+    public function sendPostMail()
+    {
+        $post = Post::where('id', \Auth::id())->first();
+        Mail::to($post->user->email)->send(new PostMail($post));
     }
 }

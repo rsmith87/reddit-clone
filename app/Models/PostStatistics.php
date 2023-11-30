@@ -20,6 +20,19 @@ class PostStatistics extends Model
     ];
 
     /**
+     * Get popular posts.
+     */
+    public function scopePopular($query)
+    {
+        return $query->where('upvote_count', '>', 100);
+    }
+
+    public function scopeUnpopular($query)
+    {
+        return $query->where('downvote_count', '>', 100)->where('view_count', '>' , 100);
+    }
+
+    /**
      * Inverse relationship for the Post to have PostStatistics
      */
     public function post(): BelongsTo

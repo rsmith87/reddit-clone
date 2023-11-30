@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserLogout;
 use App\Models\User;
+use App\Events\UserLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\User\UserSettingsResource;
 
 class AuthController extends Controller
 {
@@ -41,7 +44,9 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->with('settings')->first();
+
+            event(new UserLogin($user));
 
             return response()->json([
                 'status' => true,
@@ -58,9 +63,15 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        $settings = User::where('id', $request->user()->id)->settings()->role()->first();
-
-        return response()->json($settings);
+        if (! Auth::id() === $request->user()->id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        };
+        $user = User::where('id', $request->user()->id)->with('settings')->first();
+        
+        return new UserSettingsResource($user);
     }
 
     public function register(Request $request)
@@ -87,6 +98,8 @@ class AuthController extends Controller
 
     public function logout()
     {
+        event(new UserLogout(Auth::user()->id));
+
         Auth::user()->tokens()->delete();
 
         return response()->json([

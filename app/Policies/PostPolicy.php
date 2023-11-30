@@ -9,7 +9,39 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class PostPolicy
 {
     use HandlesAuthorization;
+    public User $user;
+    public Post $post;
 
+    /**
+     * Ensure user can view post.
+     *
+     * @param  User  $user
+     * @param  Post  $post
+     * @return bool
+     */
+    public function view(User $user)
+    {
+        return true; // Allow everyone to view.
+    }
+
+    /**
+     * Ensure user can create post.
+     *
+     * @param  User  $user
+     * @return bool
+     */
+    public function create(User $user)
+    {
+        return $user?->id; // Only allow users who are logged in.
+    }
+
+    /**
+     * Ensure user can update post.
+     *
+     * @param  User  $user
+     * @param  Post  $post
+     * @return bool
+     */
     public function update(User $user, Post $post)
     {
         return $user->id === $post->user_id;

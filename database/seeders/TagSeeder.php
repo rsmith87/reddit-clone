@@ -12,6 +12,9 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        Tag::factory()->count(20)->createQuietly();
+        $tag = new Tag;
+        $tag->name = 'Laravel';
+        $tag->slug = 'laravel';
+        $tag->saveQuietly();
     }
 }

@@ -5,9 +5,8 @@ namespace App\Providers;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\PostCommentRepository;
 use App\Repositories\EloquentRepositoryInterface;
-use App\Repositories\PostRepositoryInterface;
-use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -18,8 +17,9 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(EloquentRepositoryInterface::class, BaseRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
+        $this->app->bind(EloquentRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(EloquentRepositoryInterface::class, PostRepository::class);
+        $this->app->bind(EloquentRepositoryInterface::class, PostCommentRepository::class);
     }
 
     /**

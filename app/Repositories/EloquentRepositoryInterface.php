@@ -21,6 +21,11 @@ interface EloquentRepositoryInterface
     public function find(int $id = 0): ?Model;
 
     /**
+     * Find the model by slug.
+     */
+    public function findBySlug(string $slug): ?Model;
+
+    /**
      * Update the model.
      */
     public function update(int $id = 0, array $attributes = []): Model;

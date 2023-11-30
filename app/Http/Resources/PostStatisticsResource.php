@@ -14,6 +14,10 @@ class PostStatisticsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'view_count'     => $this->view_count,
+            'upvote_count'   => $this->upvote_count,
+            'downvote_count' => $this->downvote_count,
+        ];
     }
 }

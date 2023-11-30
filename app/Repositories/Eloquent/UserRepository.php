@@ -3,10 +3,10 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\User;
-use App\Repositories\UserRepositoryInterface;
+use App\Repositories\EloquentRepositoryInterface;
 use Illuminate\Support\Collection;
 
-class UserRepository extends BaseRepository implements UserRepositoryInterface
+class UserRepository extends BaseRepository implements EloquentRepositoryInterface
 {
     /**
      * UserRepositor constructor.

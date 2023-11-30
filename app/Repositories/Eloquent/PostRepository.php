@@ -2,17 +2,21 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
-use App\Repositories\PostRepositoryInterface;
+use App\Repositories\EloquentRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
+use App\Events\PostCreated;
 
-class PostRepository extends BaseRepository implements PostRepositoryInterface
+
+class PostRepository extends BaseRepository implements EloquentRepositoryInterface
 {
     /**
      * The post object.
      */
-    private Post $post;
+    protected Post $post;
 
     /**
      * Class constructor.
@@ -39,9 +43,27 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
         return $this->post->where('slug', $slug)->first();
     }
 
+    public function getPopular(): LengthAwarePaginator
+    {
+        $userSettings = session('userSettings'); // TODO: Fix this - it's not working
+        return $this->post->popular()->published()->paginate($userSettings['paginationSize'] ?? 5);
+    }
+
+    public function getByUser(int $userId = 0): LengthAwarePaginator
+    {
+        return $this->post->where('user_id', $userId)->paginate(5);
+    }
+
     public function create(array $data = []): Post
     {
-        return $this->post::create($data);
+        $this->post = new Post;
+        $this->post->fill($data);
+        $this->post->status = PostStatus::PUBLISHED;
+        $this->post->slug = $this->generateSlug($data['title']);
+        $this->post->user_id = auth()->user()->id;
+        $this->post->save();
+
+        return $this->post;
     }
 
     public function update(int $id = 0, array $data = []): Post
