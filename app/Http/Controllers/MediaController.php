@@ -79,7 +79,6 @@ class MediaController extends Controller
 
     public function fetchMedia(Media $media)
     {
-        $file = Storage::disk('public')->get($media->path);
         $decodedBlob = str_replace('data:'.$media->mime_type.';base64,', '', $media->blob);
         return response(base64_decode($decodedBlob), 200)->header('Content-Type', $media->mime_type);
     }
