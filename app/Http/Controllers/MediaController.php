@@ -52,19 +52,7 @@ class MediaController extends Controller
 
     public function modify(Media $media, MediaService $mediaService, MediaModifyRequest $mediaModifyRequest): ModifiedMediaResource
     {
-        $mediaModifyRequest->validated();
-
-        $attributes = [
-            'preserveAspectRatio' => $mediaModifyRequest->has('preserveAspectRatio') ? $mediaModifyRequest->get('preserveAspectRatio') : false,
-            'opacity' => $mediaModifyRequest->has('opacity') ? $mediaModifyRequest->get('opacity') : 100,
-            'overwriteOriginal' => $mediaModifyRequest->has('overwriteOriginal') ? $mediaModifyRequest->get('overwriteOriginal') : false,
-            'name' => $mediaModifyRequest->has('name') ? $mediaModifyRequest->get('name') : null,
-            'width' => $mediaModifyRequest->has('width') ? $mediaModifyRequest->get('width') : null,
-            'height' => $mediaModifyRequest->has('height') ? $mediaModifyRequest->get('height') : null,
-            'extension' => $mediaModifyRequest->has('extension') ? $mediaModifyRequest->get('extension') : $media->first()->extension,
-        ];
-
-        $resized_media = $mediaService->modify($media, $attributes);
+        $resized_media = $mediaService->modify($media, $mediaModifyRequest);
 
         return new ModifiedMediaResource($resized_media);
     }
@@ -76,9 +64,9 @@ class MediaController extends Controller
         return $deletedMedia ? response()->noContent() : response()->json('There was an error deleting your file.');
     }
 
-    public function fetch(Media $media): \Illuminate\Http\Response
+    public function fetch(Media $media, MediaService $mediaService): \Illuminate\Http\Response
     {
-        $decodedBlob = str_replace('data:'.$media->mime_type.';base64,', '', $media->blob);
+        $decodedBlob = $mediaService->stripEncodedBlobText($media);
         return response(base64_decode($decodedBlob), 200)->header('Content-Type', $media->mime_type);
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\MediaModifyRequest;
 
 class MediaService
 {
@@ -36,32 +37,31 @@ class MediaService
         return $storedMedia;
     } 
 
-    public function modify(Media $media, array $attributes)
+    public function modify(Media $media, MediaModifyRequest $mediaModifyRequest)
     {
-        $media = Media::first();
         $filename = pathinfo($media->path)['filename'];
         $image = Image::make($media->path);
 
-        if($attributes['preserveAspectRatio']) {
-            $image->resize($attributes['width'], $attributes['height'], function ($constraint) {
+        if($mediaModifyRequest->has('preserveAspectRatio')) {
+            $image->resize($mediaModifyRequest->get('width') , $mediaModifyRequest->get('height'), function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
         }
 
-        if($attributes['opacity'] < 100) {
-            $image->opacity($attributes['opacity']);
+        if($mediaModifyRequest->has('opacity') < 100) {
+            $image->opacity($mediaModifyRequest->get('opacity'));
         }
 
-        if($attributes['extension']) {
-            $path = public_path() .'/images/resized/' . $filename . '.' . $attributes['extension'];
+        if($mediaModifyRequest->has('extension')) {
+            $path = public_path() .'/images/resized/' . $filename . '.' . $mediaModifyRequest->get('extension');
             $image->save($path);
-            $media->extension = $attributes['extension'];
+            $media->extension = $mediaModifyRequest->get('extension');
             $media->save();
         }
 
-        if($attributes['name']) {
-            $path = public_path() .'/images/resized/' . $attributes['name'] . '.' . $media->extension;
+        if($mediaModifyRequest->has('name')) {
+            $path = public_path() .'/images/resized/' . $mediaModifyRequest->get('name') . '.' . $media->extension;
             $image->save($path);
             $media->path = $path;
             $media->save();
@@ -71,7 +71,6 @@ class MediaService
             return response()->json('There was an error resizing your file.');
         }
         
-
         return $media;
     }
 
@@ -95,7 +94,7 @@ class MediaService
         return $renamed->filename . '.' . $renamed->extension;
     }
 
-    public function delete(Media $media)
+    public function delete(Media $media): bool
     {
         $image = Storage::disk('public')->delete($media->path);
         $media->delete();
@@ -103,8 +102,13 @@ class MediaService
         return true;
     }
 
-    public function getPath(Media $media)
+    public function getPath(Media $media): string
     {
         return Storage::disk('public')->path($media->path);
+    }
+
+    public function stripEncodedBlobText(Media $media): string
+    {
+        return str_replace('data:'.$media->mime_type.';base64,', '', $media->blob);
     }
 }
