@@ -9,7 +9,6 @@ use App\Http\Resources\MediaResource;
 use App\Http\Resources\ModifiedMediaResource;
 use App\Models\Media;
 use App\Services\MediaService;
-use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
@@ -18,7 +17,7 @@ class MediaController extends Controller
      *
      * return string
      */
-    public function get()
+    public function get(): MediaCollection
     {
         $media = Media::all();
         $media->load(['tags']);
@@ -26,7 +25,7 @@ class MediaController extends Controller
         return new MediaCollection($media);
     }
 
-    public function find($id)
+    public function find($id): MediaResource
     {
         $media = Media::find($id);
         $media->load(['tags']);
@@ -37,7 +36,7 @@ class MediaController extends Controller
     /**
      * Posts a new instance of the model if validated.
      */
-    public function post(MediaRequest $mediaRequest, MediaService $mediaService)
+    public function post(MediaRequest $mediaRequest, MediaService $mediaService): MediaResource
     {
         /**
          * Handles validation of the request.
@@ -51,7 +50,7 @@ class MediaController extends Controller
         return new MediaResource($media);
     }
 
-    public function modify(Media $media, MediaService $mediaService, MediaModifyRequest $mediaModifyRequest)
+    public function modify(Media $media, MediaService $mediaService, MediaModifyRequest $mediaModifyRequest): ModifiedMediaResource
     {
         $mediaModifyRequest->validated();
 
@@ -70,14 +69,14 @@ class MediaController extends Controller
         return new ModifiedMediaResource($resized_media);
     }
 
-    public function delete(Media $media)
+    public function delete(Media $media, MediaService $mediaService): \Illuminate\Http\JsonResponse
     {
-        $media->delete();
+        $deletedMedia = $mediaService->delete($media);
 
-        return response()->json('Media deleted successfully.');
+        return $deletedMedia ? response()->noContent() : response()->json('There was an error deleting your file.');
     }
 
-    public function fetchMedia(Media $media)
+    public function fetch(Media $media): \Illuminate\Http\Response
     {
         $decodedBlob = str_replace('data:'.$media->mime_type.';base64,', '', $media->blob);
         return response(base64_decode($decodedBlob), 200)->header('Content-Type', $media->mime_type);

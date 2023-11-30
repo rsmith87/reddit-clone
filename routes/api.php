@@ -131,7 +131,8 @@ Route::middleware(['auth:sanctum'])
                 Route::prefix('{media}')
                     ->group(function () {
                         Route::get('', 'find');
-                        Route::get('fetch', 'fetchMedia');
+                        Route::get('fetch', 'fetch');
+                        Route::get('path', 'getPath');
                         Route::delete('', 'delete');
                         
                         Route::get('modify', 'modify');

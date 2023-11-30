@@ -2,13 +2,10 @@
 
 namespace App\Services;
 
-use App\Http\Requests\MediaRequest;
 use App\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Facades\Image;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Response;
 
 class MediaService
 {
@@ -98,8 +95,16 @@ class MediaService
         return $renamed->filename . '.' . $renamed->extension;
     }
 
+    public function delete(Media $media)
+    {
+        $image = Storage::disk('public')->delete($media->path);
+        $media->delete();
+
+        return true;
+    }
+
     public function getPath(Media $media)
     {
-        return public_path($media->path);
+        return Storage::disk('public')->path($media->path);
     }
 }

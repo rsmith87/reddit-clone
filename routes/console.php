@@ -17,3 +17,15 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('media:deleteFiles', function () {
+    $this->comment('Deleting media files...');
+    $media = \App\Models\Media::all();
+    foreach($media as $m) {
+        if(Storage::disk('public')->exists($m->path)) {
+            $this->comment('Deleting media file: ' . Storage::disk('public')->path($m->path));
+            unlink(Storage::disk('public')->path($m->path));
+        }
+    }
+    $this->comment('Done!');
+})->purpose('Delete all media files from the database.');
