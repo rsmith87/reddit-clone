@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GroupRequest;
-use App\Http\Resources\Group\GroupResource;
-use App\Http\Resources\Group\GroupCollection;
+use App\Http\Requests\CreateGroupRequest;
+use App\Http\Resources\GroupPostCollection;
+use App\Http\Resources\GroupResource;
+use App\Http\Resources\GroupCollection;
+use App\Models\Group;
 use App\Repositories\Eloquent\GroupRepository;
 use App\Http\Resources\PostCollection;
 use Illuminate\Support\Facades\Cache;
@@ -20,7 +22,7 @@ class GroupController extends Controller
 		$this->groupRepository = $groupRepository;
 	}
 
-	public function index()
+	public function index(): GroupCollection
 	{
 		$userSettings = Cache::get('user_settings_' . \Auth::id());
 		$groups = $this->groupRepository->all();
@@ -28,39 +30,38 @@ class GroupController extends Controller
 		return new GroupCollection($groups);
 	}
 
-	public function store(GroupRequest $groupRequest)
+	public function show(Group $group): GroupResource
+	{
+		return new GroupResource($group);
+	}
+
+	public function store(CreateGroupRequest $groupRequest): GroupResource
 	{
 		$group = $this->groupRepository->create($groupRequest->all());
 
 		return new GroupResource($group);
 	}
 
-	public function update(string $slug)
+	public function update(Group $group): GroupResource
 	{
-		$group = $this->groupRepository->update($slug, request()->all());
+		$group = $this->groupRepository->update($group->slug, request()->all());
 
 		return new GroupResource($group);
 	}
 
-    public function delete(int $id = 0): bool
+    public function delete(Group $group): bool
     {
-		$this->groupRepository->delete($id);
+		$this->groupRepository->delete($group);
 
         return true;
     }
 
-	public function getPostsByGroupSlug(string $slug)
+	public function getPostsByGroup(Group $group): GroupPostCollection
 	{
-		$group = $this->groupRepository->findBySlug($slug);
-		if ( ! $group) {
-			return response()->json([
-				'message' => 'Group not found',
-			], 404);
-		}
-		$userSettings = Cache::get('user_settings_' . \Auth::id());
+		//$userSettings = Cache::get('user_settings_' . \Auth::id());
 
-		$posts = $group->posts()->paginate($userSettings->paginationSize ?? 10);
+		$posts = $group->posts()->paginate(10);
 
-		return new PostCollection($posts);
+		return new GroupPostCollection($posts);
 	}
 }

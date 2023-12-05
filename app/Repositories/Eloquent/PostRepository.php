@@ -45,8 +45,8 @@ class PostRepository extends BaseRepository implements EloquentRepositoryInterfa
 
     public function getPopular(): LengthAwarePaginator
     {
-        $userSettings = session('userSettings'); // TODO: Fix this - it's not working
-        return $this->post->popular()->published()->paginate($userSettings['paginationSize'] ?? 5);
+        //$userSettings = session('userSettings'); // TODO: Fix this - it's not working
+        return $this->post->popular()->paginate(5);
     }
 
     public function getByUser(int $userId = 0): LengthAwarePaginator
@@ -72,5 +72,10 @@ class PostRepository extends BaseRepository implements EloquentRepositoryInterfa
         $this->post->update($data);
 
         return $this->post;
+    }
+
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginator
+    {
+        return $this->post->paginate($perPage, $columns, $pageName, $page);
     }
 }

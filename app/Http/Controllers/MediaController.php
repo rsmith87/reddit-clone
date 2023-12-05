@@ -25,9 +25,8 @@ class MediaController extends Controller
         return new MediaCollection($media);
     }
 
-    public function find($id): MediaResource
+    public function find(Media $media): MediaResource
     {
-        $media = Media::find($id);
         $media->load(['tags']);
 
         return new MediaResource($media);
@@ -66,7 +65,15 @@ class MediaController extends Controller
 
     public function fetch(Media $media, MediaService $mediaService): \Illuminate\Http\Response
     {
+        //Cache::get('media', );
         $decodedBlob = $mediaService->stripEncodedBlobText($media);
-        return response(base64_decode($decodedBlob), 200)->header('Content-Type', $media->mime_type);
+        return response(
+            base64_decode($decodedBlob), 
+            200
+        )->withHeaders([
+            'Content-Type' => $media->mime_type,
+            'Cache-Control' => 'max-age=' . 60 * 60 * 24 * 31 . ', must-revalidate, public, immutable',
+            'Expires' => 60 * 60 * 24 * 31,
+        ]);
     }
 }

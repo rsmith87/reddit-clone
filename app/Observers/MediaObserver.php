@@ -10,5 +10,6 @@ class MediaObserver
     public function creating(Media $media)
     {
         $media->user_id = Auth::id();
+        $media->slug = $media->generateSlug($media->name);
     }
 }

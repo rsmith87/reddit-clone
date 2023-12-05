@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['draft', 'published', 'queued']);
-            $table->text('title');
+            $table->string('title', 128);
             $table->text('content');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->foreignId('user_id');
             $table->timestamps();
         });

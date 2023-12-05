@@ -19,7 +19,7 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
-        $title = fake()->sentences(4, true);
+        $title = fake()->realText(128, 1);
         $slug = Str::slug($title);
         return [
             'status' => PostStatus::PUBLISHED,

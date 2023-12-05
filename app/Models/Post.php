@@ -5,13 +5,16 @@ namespace App\Models;
 use App\Enums\PostStatus;
 use App\Models\Traits\HasSlug;
 use App\Models\User;
+use App\Models\Reaction;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 
 class Post extends Model
 {
@@ -45,9 +48,32 @@ class Post extends Model
         'user_id' => 'integer',
     ];
 
+    /**
+     * Gets tags that were attached to the post.
+     */
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggables');
+    }
+
+    public function comments(): MorphToMany
+    {
+        return $this->morphToMany(Comment::class, 'commentables');
+    }
+
+    public function statistics(): MorphOne
+    {
+        return $this->morphOne(Statistics::class, 'statisticables');
+    }
+
+    public function reactions(): MorphMany
+    {
+        return $this->morphMany(Reaction::class, 'reactionables');
+    }
+
     public function scopePopular(Builder $query): void
     {
-        $query->whereHas('postStatistics', function ($subquery) {
+        $query->whereHas('statistics', function ($subquery) {
             $subquery->where('upvote_count', '>', 100);
         });
     }
@@ -65,30 +91,6 @@ class Post extends Model
     public function scopeQueued(Builder $query): void
     {
         $query->where(['status' => PostStatus::QUEUED]);
-    }
-
-    /**
-     * Gets tags that were attached to the post.
-     */
-    public function tags(): MorphToMany
-    {
-        return $this->morphToMany(Tag::class, 'taggables');
-    }
-
-    /**
-     * Retrieves post statistics
-     */
-    public function postStatistics(): HasOne
-    {
-        return $this->hasOne(PostStatistics::class, 'post_id', 'id');
-    }
-
-    /**
-     * Retrieves post comments
-     */
-    public function postComments(): HasMany
-    {
-        return $this->hasMany(PostComment::class, 'post_id', 'id');
     }
 
     /**

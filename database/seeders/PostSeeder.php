@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Reaction;
 use App\Models\User;
 use App\Models\Post;
-use App\Models\PostComment;
-use App\Models\PostStatistics;
+use App\Models\Comment;
+use App\Models\Group;
+use App\Models\Statistics;
 use App\Models\Tag;
 use App\Enums\PostStatus;
 use Illuminate\Database\Seeder;
@@ -43,12 +45,15 @@ class PostSeeder extends Seeder
         $post->status = PostStatus::DRAFT;
         $post->slug = "draft-post-for-testing";
         $post->save();
+        
 
         Post::factory()
-            ->has(PostStatistics::factory())
-            ->has(PostComment::factory())
+            ->has(Statistics::factory())
             ->has(Tag::factory())
-            ->count(40)
+            ->has(Reaction::factory())
+            //->has(Group::factory())
+            ->has(Comment::factory())
+            ->count(10)
             ->createQuietly();
     }
 }

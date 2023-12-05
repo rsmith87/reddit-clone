@@ -8,8 +8,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Mail\PostMail;
 use Mail;
 
-class SendMailOnPostCreated
+class SendMailOnPostCreated implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /**
      * Create the event listener.
      */

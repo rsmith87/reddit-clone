@@ -25,9 +25,9 @@ class MediaFactory extends Factory
             'name' => fake()->word(),
             'hash_name' => fake()->sha1(),
             'mime_type' => fake()->mimeType(),
-            'extension' => fake()->fileExtension(),
             'path' => fake()->imageUrl(1024, 768, null, null, null, false, 'png'),
             'size' => mt_rand(100000000, 999999999),
+            'slug' => fake()->slug(),
             'user_id' => User::factory(),
             'blob' => fake()->image(),
         ];

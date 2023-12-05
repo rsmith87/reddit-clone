@@ -31,6 +31,7 @@ class MediaService
         $storedMedia->mime_type = $file->getMimeType();
         $storedMedia->size = $file->getSize();
         $storedMedia->blob = Image::make($file)->encode('data-url')->encoded;
+        $storedMedia->slug = $storedMedia->generateSlug($storedMedia->name);
         $storedMedia->user_id = auth()->id();
         $storedMedia->save();
 

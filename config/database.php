@@ -135,6 +135,7 @@ return [
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
+            'prefix' => 'd:',
         ],
 
         'cache' => [
@@ -144,8 +145,26 @@ return [
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
+            'prefix' => 'c:',
         ],
-
+        //the `queue` connection of the redis driver
+        'queue' => [
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_DB', '0'),
+            'prefix' => 'q:',
+        ],
+        //the `session` connection of the redis driver
+        'session' => [
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_DB', '0'),
+            #since config/session.php does not have an app level prefix we can change
+            #this prefx to `myapp:s:` if we share redis server between apps
+            'prefix' => 's:'
+        ],
     ],
 
 ];

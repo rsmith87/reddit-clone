@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
+use App\Models\ModelActions;
 use App\Models\Post;
 use App\Repositories\Eloquent\PostRepository;
 use App\Events\PostCreated;
+use App\Events\PostViewed;
+use Illuminate\Support\Facades\Cache;
+
 
 class PostController extends Controller
 {
@@ -26,8 +30,8 @@ class PostController extends Controller
     public function index()
     {
         $this->authorize('view', Post::class);
-        $posts = $this->postRepository->all();
-        $posts->load(['postComments', 'postStatistics']);
+        $posts = $this->postRepository->paginate();
+        $posts->load(['comments', 'statistics', 'reactions']);
 
         return new PostCollection($posts);
     }
@@ -36,18 +40,30 @@ class PostController extends Controller
     {
         $this->authorize('view', Post::class);
         $posts = $this->postRepository->getPopular();
-        $posts->load(['postComments', 'postStatistics']);
 
         return new PostCollection($posts);
     }
 
-    public function findBySlug($slug)
+    public function findById(Post $post): PostResource
     {
         $this->authorize('view', Post::class);
-        $posts = $this->postRepository->findBySlug($slug);
-        $posts->load(['postComments', 'postStatistics']);
+        $post = $this->postRepository->find($post->id);
+        $post->load(['comments', 'statistics']);
 
-        return new PostResource($posts);
+        PostViewed::dispatch($post);
+
+        return new PostResource($post);
+    }
+
+    public function findBySlug(Post $post): PostResource
+    {
+        $this->authorize('view', Post::class);
+        $post = $this->postRepository->findBySlug($post->slug);
+        $post->load(['comments', 'statistics']);
+
+        PostViewed::dispatch($post);
+
+        return new PostResource($post);
     }
 
     public function store(PostRequest $postRequest)
@@ -57,7 +73,7 @@ class PostController extends Controller
 
         $post = $this->postRepository->create($validated);
 
-        event(new PostCreated($post));
+        PostCreated::dispatch($post);
 
         return new PostResource($post);
     }

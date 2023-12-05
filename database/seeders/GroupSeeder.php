@@ -25,5 +25,12 @@ class GroupSeeder extends Seeder
         $groupTwo->description = 'Public group description';
         $groupTwo->slug = 'public-group';
         $groupTwo->save();
+
+        $groupThree = new Group;
+        $groupThree->name = 'Group for RC';
+        $groupThree->type = 'public';
+        $groupThree->description = 'Group for RC fans';
+        $groupThree->slug = 'rc-group';
+        $groupThree->save();
     }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('mime_type');
             $table->bigInteger('size');
             $table->binary('blob')->nullable();
+            $table->string('slug');
             $table->foreignId('user_id')->nullable()->constrained('users', 'id');
             $table->timestamps();
         });

@@ -62,10 +62,10 @@ class User extends Authenticatable
     }
 
     /**
-     * The comments that belong to the user.
+     * The reactions that belong to the user.
      */
-    public function postComments(): HasMany
+    public function reactions(): HasMany
     {
-        return $this->hasMany(PostComment::class);
+        return $this->hasMany(Reaction::class);
     }
 }

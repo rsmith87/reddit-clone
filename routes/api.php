@@ -5,7 +5,6 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\MailTemplateController;
 use App\Http\Controllers\MediaController;
-use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
 use Illuminate\Http\Request;
@@ -23,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user()->with('posts')->with('comments')->get();
+    return $request->user()->with('posts')->get();
 });
 
 Route::controller(AuthController::class)
@@ -59,19 +58,13 @@ Route::middleware(['auth:sanctum'])
                         Route::get('', 'findBySlug');
                         Route::patch('', 'patch');
                         Route::delete('delete', 'delete');
+
+                        Route::post('like', 'like');
+                        Route::post('dislike', 'dislike');
                 });
 
                 Route::get('popular', 'getPopularPosts')
                     ->name('post.popular');
-        });
-
-        Route::controller(PostCommentController::class)
-            ->prefix('posts/{post:slug}/comments')
-            ->group(function () {
-                Route::get('', 'getCommentsByPostSlug');
-                Route::post('', 'storeCommentByPostSlug');
-                Route::post('store', 'storeCommentByPostSlug');
-                Route::delete('{postComment}', 'delete');
         });
 
         Route::controller(TagController::class)
@@ -146,15 +139,15 @@ Route::middleware(['auth:sanctum'])
                 Route::get('', 'index');
                 Route::post('', 'store');
         
-                Route::prefix('{slug}')
+                Route::prefix('{group}')
                     ->group(function () {
-                        Route::get('', 'findBySlug');
+                        Route::get('', 'show');
                         Route::patch('', 'patch');
                         Route::delete('', 'delete');
 
                         Route::prefix('posts')
                             ->group(function () {
-                                Route::get('', 'getPostsByGroupSlug');
+                                Route::get('', 'getPostsByGroup');
                                 Route::post('', 'storePostByGroupSlug');
                         });
                 });

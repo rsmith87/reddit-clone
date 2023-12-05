@@ -19,7 +19,7 @@ class MediaAddTest extends TestCase
             User::factory()->create(),
         );
 
-        Storage::fake('media');
+        Storage::fake('public');
 
         $file = UploadedFile::fake()->image('media.jpg');
 
@@ -27,6 +27,6 @@ class MediaAddTest extends TestCase
             'file' => $file,
         ]);
 
-        Storage::disk('local')->assertExists('images/'.$file->hashName());
+        Storage::disk('public')->assertExists('images/'.$file->hashName());
     }
 }

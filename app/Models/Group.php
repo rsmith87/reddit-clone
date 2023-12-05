@@ -12,12 +12,18 @@ class Group extends Model
     use HasFactory;
     use HasSlug;
 
+    public function getRouteKeyName()
+    {
+        return 'slug'; // replace with your actual route key name
+    }
+
+
     /**
      * Set the field that should be used for the slug.
      *
      * @var string
      */
-    protected $slugField = 'slug';
+    protected $slugField = 'name';
 
     /**
      * Fillable attributes for the model
@@ -46,6 +52,11 @@ class Group extends Model
 
     public function posts(): BelongsToMany
     {
-        return $this->belongsToMany(Post::class, 'group_post');
+        return $this->belongsToMany(Post::class, 'group_post', 'group_id', 'id');
+    }
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'group_user', 'group_id', 'id');
     }
 }
