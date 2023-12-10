@@ -7,6 +7,8 @@ use App\Http\Controllers\MailTemplateController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\VoteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +46,17 @@ Route::middleware(['auth:sanctum'])
                 Route::delete('', 'deleteMe');
         });
 
+        Route::apiResource('votes', VoteController::class);
+
+        Route::controller(UserProfileController::class)
+            ->prefix('profile')
+            ->group(function () {
+                Route::get('{user:username}', 'getProfileForUser');
+                Route::post('', 'createProfileForUser');
+                Route::patch('', 'editProfileForUser');
+                Route::delete('', 'deleteProfileForUser');
+        });
+
         // Post management.
         Route::controller(PostController::class)
             ->prefix('posts')
@@ -53,7 +66,7 @@ Route::middleware(['auth:sanctum'])
                 Route::post('', 'store')
                     ->name('post.store');
 
-                Route::prefix('{post:slug}')
+                Route::prefix('{post}')
                     ->group(function () {
                         Route::get('', 'findBySlug');
                         Route::patch('', 'patch');
@@ -148,7 +161,13 @@ Route::middleware(['auth:sanctum'])
                         Route::prefix('posts')
                             ->group(function () {
                                 Route::get('', 'getPostsByGroup');
-                                Route::post('', 'storePostByGroupSlug');
+                                Route::post('', 'storePostByGroup');
+                        });
+
+                        Route::prefix('members')
+                            ->group(function () {
+                                Route::get('', 'getMembersByGroup');
+                                Route::post('', 'storeMemberByGroup');
                         });
                 });
         });

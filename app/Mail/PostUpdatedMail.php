@@ -2,15 +2,15 @@
 
 namespace App\Mail;
 
+use App\Models\MailTemplate;
 use App\Models\Post;
 use Illuminate\Bus\Queueable;
-use App\Models\MailTemplate;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Queue\SerializesModels;
-use Spatie\MailTemplates\TemplateMailable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MailTemplates\TemplateMailable;
 
-class PostMail extends TemplateMailable implements ShouldQueue
+class PostUpdatedMail extends TemplateMailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -35,7 +35,7 @@ class PostMail extends TemplateMailable implements ShouldQueue
 
     public function getHtmlLayout(): string
     {
-        return view('mail.post', [
+        return view('mail.post-updated', [
             'post' => $this->post,
             'name' => $this->post->title,
         ])->render();

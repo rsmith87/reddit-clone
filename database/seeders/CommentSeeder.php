@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Vote;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Comment;
@@ -13,13 +14,9 @@ class CommentSeeder extends Seeder
      */
     public function run(): void
     {
-        /*$comment = new Comment;
-        $comment->user_id = 1;
-        $comment->content = "This is a comment for testing.";
-        $comment->save();*/
-
-        // TODO: figure out how to seed comments with polymorphic relationships
-
-        Comment::factory()->count(10)->create();
+        Comment::factory()
+            ->has(Vote::factory())
+            ->count(10)
+            ->create();
     }
 }

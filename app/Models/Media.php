@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Models\Traits\HasSlug;
 use Illuminate\Support\Str;
-
+use App\Models\Traits\Votable;
 
 class Media extends Model
 {
     use HasFactory;
     use HasSlug;
+    use Votable;
 
     public $guarded = [
         'name',
@@ -47,9 +48,9 @@ class Media extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function reactions(): MorphMany
+    public function votes()
     {
-        return $this->morphMany(Reaction::class, 'reactions');
+        return $this->morphMany(Vote::class, 'votable', 'votable_type', 'votable_id');
     }
 
     public function scopeLargeSize($query)

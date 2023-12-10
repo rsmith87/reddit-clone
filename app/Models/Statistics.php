@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use App\Models\Post;
 
 class Statistics extends Model
 {
@@ -13,12 +15,23 @@ class Statistics extends Model
 
     public $guarded = [
         'views',
-        'statisticable_id',
-        'statisticable_type',
+        'likes',
+        'dislikes',
     ];
 
-    public function statisticable(): MorphTo
+    protected $casts = [
+        'views'     => 'integer',
+        'likes'     => 'integer',
+        'dislikes'  => 'integer',
+    ];
+
+    public function posts(): MorphOne
     {
-        return $this->morphTo();
+        return $this->morphOne(Post::class, 'statisticables');
+    }
+
+    public function media(): MorphOne
+    {
+        return $this->morphOne(Media::class, 'statisticables');
     }
 }

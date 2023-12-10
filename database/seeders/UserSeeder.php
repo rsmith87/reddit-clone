@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Settings;
+use App\Models\UserProfile;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -15,14 +16,16 @@ class UserSeeder extends Seeder
     {
 
         User::create([
-            'name' => 'Rob',
-            'email' => 'codenut33@gmail.com',
+            'name'     => 'Rob',
+            'username' => 'codenut',
+            'email'    => 'codenut33@gmail.com',
             'password' => '123123123',
         ]);
         
         User::factory()
             ->count(10)
             ->has(Settings::factory())
+            ->has(UserProfile::factory())
             ->create();
     }
 }

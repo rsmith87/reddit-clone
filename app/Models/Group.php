@@ -55,8 +55,8 @@ class Group extends Model
         return $this->belongsToMany(Post::class, 'group_post', 'group_id', 'id');
     }
 
-    public function members(): BelongsToMany
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'group_user', 'group_id', 'id');
+        return $this->belongsToMany(User::class, 'group_user', 'group_id', 'user_id');
     }
 }

@@ -36,5 +36,13 @@ class MailTemplateSeeder extends Seeder
             'html_template' => '<h1>NEW POST BRO</h1>',
             'text_template' => 'NEW POST BRO!',
         ]);
+
+        MailTemplate::create([
+            'name' => 'Post updated email',
+            'mailable' => \App\Mail\PostUpdatedMail::class,
+            'subject' => 'Updated post: {{ name }}',
+            'html_template' => '<h1>Updated POST BRO</h1>',
+            'text_template' => 'Updated POST BRO!',
+        ]);
     }
 }

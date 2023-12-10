@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\PostCreated;
+use App\Events\PostUpdated;
 use App\Events\PostViewed;
 use App\Events\MediaCreated;
 use App\Events\UserCreated;
@@ -14,6 +15,7 @@ use App\Listeners\CreateStatisticsRecordOnMediaSave;
 use App\Listeners\CreateStatisticsRecordOnPostSave;
 use App\Listeners\DestroyUserSettingsCache;
 use App\Listeners\SendMailOnPostCreated;
+use App\Listeners\SendMailOnPostUpdated;
 use App\Listeners\CacheUserSettingsOnLogin;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -34,13 +36,15 @@ class EventServiceProvider extends ServiceProvider
             CreateStatisticsRecordOnPostSave::class,
             SendMailOnPostCreated::class,
         ],
+        PostUpdated::class => [
+            SendMailOnPostUpdated::class,
+        ],
         PostViewed::class => [
             AddOneToPostViewStat::class,
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-
         UserCreated::class => [
             CreateSettingsRecordOnUserCreation::class,
         ],

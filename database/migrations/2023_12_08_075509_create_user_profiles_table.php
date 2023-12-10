@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('statistics', function (Blueprint $table) {
+        Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
-            $table->integer('views')->default(0);
-            $table->integer('likes')->default(0);
-            $table->integer('dislikes')->default(0);
-            $table->morphs('statisticables');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->json('profile_data')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('statistics');
+        Schema::dropIfExists('user_profiles');
     }
 };

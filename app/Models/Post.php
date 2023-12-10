@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PostStatus;
 use App\Models\Traits\HasSlug;
+use App\Models\Traits\Votable;
 use App\Models\User;
 use App\Models\Reaction;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -20,6 +21,7 @@ class Post extends Model
 {
     use HasFactory;
     use HasSlug;
+    use Votable;
 
     public function getRouteKeyName()
     {
@@ -66,9 +68,9 @@ class Post extends Model
         return $this->morphOne(Statistics::class, 'statisticables');
     }
 
-    public function reactions(): MorphMany
+    public function votes()
     {
-        return $this->morphMany(Reaction::class, 'reactionables');
+        return $this->morphMany(Vote::class, 'votable', 'votable_type', 'votable_id');
     }
 
     public function scopePopular(Builder $query): void

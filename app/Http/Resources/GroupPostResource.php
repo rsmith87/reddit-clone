@@ -25,7 +25,7 @@ class GroupPostResource extends JsonResource
             'user' => (new UserResource($this->user)),
             'tags' => TagResource::collection($this->tags),
             'comments' => CommentResource::collection($this->comments),
-            'statistics' => StatisticsResource::collection($this->statistics),
+            //'statistics' => StatisticsResource::collection($this->statistics),
         ];
     }
 }

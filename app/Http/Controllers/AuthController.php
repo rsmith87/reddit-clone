@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\User\UserSettingsResource;
+use App\Http\Resources\UserSettingsResource;
 
 class AuthController extends Controller
 {
@@ -69,7 +69,7 @@ class AuthController extends Controller
                 'message' => 'Unauthenticated',
             ], 401);
         };
-        $user = User::where('id', $request->user()->id)->with('settings')->first();
+        $user = User::where('id', $request->user()->id)->with('settings')->with('userProfile')->first();
         
         return new UserSettingsResource($user);
     }

@@ -24,9 +24,22 @@ class PostResource extends JsonResource
             'title'      => $this->title,
             'content'    => $this->content,
             'slug'       => $this->slug,
+            'created_by' => new UserResource($this->whenLoaded('user')),
             'tags'       => TagResource::collection($this->whenLoaded('tags')),
             'comments'   => CommentResource::collection($this->whenLoaded('comments')),
             'statistics' => new StatisticsResource($this->whenNotNull($statistics)),
+            'upvote_count' => $this->getUpvoteCount($this),
+            'downvote_count' => $this->getDownvoteCount($this),
         ];
+    }
+
+    private function getUpvoteCount($votable)
+    {
+        return $votable->votes()->where('vote', 'upvote')->count();
+    }
+
+    private function getDownvoteCount($votable)
+    {
+        return $votable->votes()->where('vote', 'downvote')->count();
     }
 }

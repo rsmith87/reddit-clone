@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateGroupRequest;
+use App\Http\Requests\Group\CreateGroupRequest;
+use App\Http\Resources\GroupMemberCollection;
 use App\Http\Resources\GroupPostCollection;
 use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupCollection;
@@ -60,8 +61,17 @@ class GroupController extends Controller
 	{
 		//$userSettings = Cache::get('user_settings_' . \Auth::id());
 
-		$posts = $group->posts()->paginate(10);
+		$posts = $group->posts()->paginate(20);
 
 		return new GroupPostCollection($posts);
+	}
+
+	public function getMembersByGroup(Group $group): GroupMemberCollection
+	{
+		//$userSettings = Cache::get('user_settings_' . \Auth::id());
+
+		$members = $group->users()->paginate(20);
+
+		return new GroupMemberCollection($members);
 	}
 }

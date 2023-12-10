@@ -16,12 +16,12 @@ class CreateStatisticsRecordOnMediaSave implements ShouldQueue
      */
     public function handle(MediaCreated $event): void
     {
-        $postStatistics = new Statistics;
-        $postStatistics->statisticables_type = \App\Models\Media::class;
-        $postStatistics->statisticables_id = $event->media->id;
-        $postStatistics->views = 0;
-        $postStatistics->likes = 0;
-        $postStatistics->dislikes = 0;
-        $postStatistics->save();
+        $statistics = new Statistics;
+        $statistics->statisticables_type = \App\Models\Media::class;
+        $statistics->statisticables_id = $event->media->id;
+        $statistics->views = 0;
+        $statistics->likes = 0;
+        $statistics->dislikes = 0;
+        $statistics->save();
     }
 }

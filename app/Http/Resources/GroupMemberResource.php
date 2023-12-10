@@ -4,9 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\SettingsResource;
 
-class UserSettingsResource extends JsonResource
+class GroupMemberResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,9 +17,7 @@ class UserSettingsResource extends JsonResource
         return [
             'name' => $this->name,
             'email' => $this->email,
-            'created_at' => $this->created_at,
-            'settings' => (new SettingsResource($this->settings)),
-            'profile' => (new UserProfileResource($this->profile)),
+            'created_at' => (string) $this->created_at,
         ];
     }
 }

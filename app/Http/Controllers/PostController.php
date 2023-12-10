@@ -25,18 +25,19 @@ class PostController extends Controller
     /**
      * Returns all instances of the model
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return PostCollection
      */
-    public function index()
+    public function index(): PostCollection
     {
         $this->authorize('view', Post::class);
         $posts = $this->postRepository->paginate();
-        $posts->load(['comments', 'statistics', 'reactions']);
+        $posts->load(['comments', 'statistics', 'user', 'votes']);
+        $posts->loadMissing(['comments.user']);
 
         return new PostCollection($posts);
     }
 
-    public function getPopularPosts()
+    public function getPopularPosts(): PostCollection
     {
         $this->authorize('view', Post::class);
         $posts = $this->postRepository->getPopular();
@@ -48,9 +49,6 @@ class PostController extends Controller
     {
         $this->authorize('view', Post::class);
         $post = $this->postRepository->find($post->id);
-        $post->load(['comments', 'statistics']);
-
-        PostViewed::dispatch($post);
 
         return new PostResource($post);
     }
@@ -58,22 +56,18 @@ class PostController extends Controller
     public function findBySlug(Post $post): PostResource
     {
         $this->authorize('view', Post::class);
-        $post = $this->postRepository->findBySlug($post->slug);
-        $post->load(['comments', 'statistics']);
 
-        PostViewed::dispatch($post);
+        $post = $this->postRepository->findBySlug($post->slug);
+
 
         return new PostResource($post);
     }
 
-    public function store(PostRequest $postRequest)
+    public function store(PostRequest $request): PostResource
     {
-        $this->authorize('create', [Post::class, $postRequest->user()]);
-        $validated = $postRequest->validated();
+        $this->authorize('create', [Post::class, $request->user()]);
 
-        $post = $this->postRepository->create($validated);
-
-        PostCreated::dispatch($post);
+        $post = $this->postRepository->create($request->validated());
 
         return new PostResource($post);
     }
@@ -81,9 +75,10 @@ class PostController extends Controller
     public function patch(PostRequest $postRequest, Post $post)
     {
         $this->authorize('update', $post);
-        $postRequest->user()->posts()->update($postRequest->validated());
 
-        return response()->json($postRequest->all());
+        $post = $this->postRepository->patch($post, $postRequest->validated());
+
+        return new PostResource($post);
     }
 
     public function delete(PostRequest $postRequest, Post $post)

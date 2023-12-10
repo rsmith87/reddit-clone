@@ -3,11 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use App\Models\Comment;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin Comment */
-class CommentResource extends JsonResource
+class UserProfileResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +15,11 @@ class CommentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'comment' => $this->comment,
-            'created_at' => $this->created_at,     
-            'user' => new UserResource($this->user),
+            'bio' => $this->profile_data['bio'],
+            'city' => $this->profile_data['city'],
+            'state' => $this->profile_data['state'],
+            'twitter' => $this->profile_data['twitter'],
+            'website' => $this->profile_data['website'],
         ];
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Events\PostCreated;
+use App\Events\PostUpdated;
+use App\Events\PostViewed;
 use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Repositories\EloquentRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
-use App\Events\PostCreated;
-
 
 class PostRepository extends BaseRepository implements EloquentRepositoryInterface
 {
@@ -34,13 +34,21 @@ class PostRepository extends BaseRepository implements EloquentRepositoryInterfa
     public function find(int $id = 0): ?Post
     {
         $this->post = $this->post::findOrFail($id);
+        $this->post->load(['comments', 'statistics', 'votes']);
+
+        PostViewed::dispatch($this->post);
 
         return $this->post;
     }
 
     public function findBySlug(string $slug): ?Post
     {
-        return $this->post->where('slug', $slug)->first();
+        $this->post = Post::where('slug', $slug)->first();
+        $this->post->load(['comments', 'statistics', 'votes']);
+
+        PostViewed::dispatch($this->post);
+
+        return $this->post;
     }
 
     public function getPopular(): LengthAwarePaginator
@@ -63,13 +71,17 @@ class PostRepository extends BaseRepository implements EloquentRepositoryInterfa
         $this->post->user_id = auth()->user()->id;
         $this->post->save();
 
+        PostCreated::dispatch($this->post);
+
         return $this->post;
     }
 
-    public function update(int $id = 0, array $data = []): Post
+    public function patch(Post $post, array $data = []): Post
     {
-        $this->post = $this->post::findOrFail($id);
+        $this->post = $post;
         $this->post->update($data);
+
+        PostUpdated::dispatch($this->post);
 
         return $this->post;
     }
